@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 import json, ast
 from itertools import groupby
 from django.db.models import Sum
+from django.views.decorators.csrf import csrf_exempt
 
 User = get_user_model()
 
@@ -219,6 +220,35 @@ def Login(request):
             return redirect('login')
 
     return render(request, 'login.html')
+
+@csrf_exempt
+def forgot_password(request):
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not phone or not new_password or not confirm_password:
+            messages.error(request, "All fields are required!")
+            return redirect('forgot_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match!")
+            return redirect('forgot_password')
+
+        try:
+            user = User.objects.get(phone=phone)
+        except User.DoesNotExist:
+            messages.error(request, "No user found with this phone number!")
+            return redirect('forgot_password')
+
+        user.set_password(new_password)
+        user.save()
+
+        messages.success(request, "Password updated successfully! Please log in.")
+        return redirect('login')
+
+    return render(request, 'forgot_password.html')
 
 
 def Logout(request):

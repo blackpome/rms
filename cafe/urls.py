@@ -15,6 +15,7 @@ urlpatterns = [
     path('manage_menu', views.manage_menu, name='manage_menu'),
     path('cart', views.cart, name='cart'),
     # path('checkout', views.checkout, name='checkout'),
+    path('forgot-password', views.forgot_password, name='forgot_password'),
     path('my_orders', views.my_orders, name='my_orders'),
     path('login', views.Login, name='login'),
     path('signup', views.signup, name='signup'),
